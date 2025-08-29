@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- Your head content, now with the suggested meta tag added -->
+    <!-- Your head content, now corrected and deduplicated -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes"> <!-- Added for best practice -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes"> <!-- Corrected: now only one instance -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Day Cycle">
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
@@ -49,6 +49,7 @@
     <!-- Main App Card -->
     <div class="relative bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg text-center w-full max-w-sm">
         
+        <!-- Corrected: Buttons now both use p-2 for consistent padding, with mr-2 on search for spacing -->
         <div class="flex justify-between items-center absolute top-4 right-4">
             <button id="search-button" class="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800 focus:ring-indigo-500 mr-2">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
@@ -62,7 +63,7 @@
         <h1 class="text-3xl font-bold text-indigo-800 dark:text-indigo-400 my-8">School Day Cycle</h1>
 
         <div class="border-2 border-slate-200 dark:border-slate-700 rounded-lg p-5 mt-5 flex flex-col justify-center items-center min-h-[120px]">
-            <h2 class="text-lg text-slate-600 dark:text-slate-400">Today is:</h2>
+            <h2 class="text-lg text-slate-600 dark:text-slate-400 mb-1">Today is:</h2>
             <div class="font-bold my-6" id="today-event">Loading...</div>
         </div>
         
@@ -113,23 +114,109 @@
         let calendarMap = new Map();
 
         // --- MODAL LOGIC ---
-        function openModal() { searchModal.classList.remove('opacity-0', 'pointer-events-none'); modalContent.classList.remove('scale-95'); }
-        function closeModal() { searchModal.classList.add('opacity-0', 'pointer-events-none'); modalContent.classList.add('scale-95'); }
-        function initializeModal() { searchButton.addEventListener('click', openModal); closeModalButton.addEventListener('click', closeModal); searchModal.addEventListener('click', (event) => { if (event.target === searchModal) closeModal(); }); window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !searchModal.classList.contains('pointer-events-none')) closeModal(); }); }
+        function openModal() {
+            searchModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+        }
+        function closeModal() {
+            searchModal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.add('scale-95');
+        }
+        function initializeModal() {
+            searchButton.addEventListener('click', openModal);
+            closeModalButton.addEventListener('click', closeModal);
+            searchModal.addEventListener('click', (event) => {
+                if (event.target === searchModal) closeModal();
+            });
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !searchModal.classList.contains('pointer-events-none')) closeModal();
+            });
+        }
 
         // --- THEME/DARK MODE LOGIC ---
-        function enableDarkMode() { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); lightIcon.classList.remove('hidden'); darkIcon.classList.add('hidden'); }
-        function disableDarkMode() { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden'); }
-        function initializeTheme() { const savedTheme = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; if (savedTheme === 'dark' || (!savedTheme && prefersDark)) { enableDarkMode(); } else { disableDarkMode(); } themeToggleButton.addEventListener('click', () => { if (document.documentElement.classList.contains('dark')) { disableDarkMode(); } else { enableDarkMode(); } }); }
+        function enableDarkMode() {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+            lightIcon.classList.remove('hidden');
+            darkIcon.classList.add('hidden');
+        }
+        function disableDarkMode() {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+            lightIcon.classList.add('hidden');
+            darkIcon.classList.remove('hidden');
+        }
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                enableDarkMode();
+            } else {
+                disableDarkMode();
+            }
+
+            themeToggleButton.addEventListener('click', () => {
+                if (document.documentElement.classList.contains('dark')) {
+                    disableDarkMode();
+                } else {
+                    enableDarkMode();
+                }
+            });
+        }
         
         // --- CALENDAR LOGIC ---
-        async function initializeCalendar() { updateEventUI(todayResultDiv, 'Loading...'); lastUpdatedP.textContent = 'Fetching latest calendar data...'; const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A:E?key=${API_KEY}`; try { const response = await fetch(url); if (!response.ok) throw new Error(`Network response error: ${response.status}`); const data = await response.json(); calendarMap.clear(); const rows = data.values || []; rows.slice(1).forEach(row => { if (row[0] && row[4]) calendarMap.set(row[0], row[4]); }); displayToday(); if (datePicker.value) updateLookupResult(); lastUpdatedP.textContent = `Calendar data updated at: ${new Date().toLocaleTimeString()}`; } catch (error) { console.error('Error fetching calendar data:', error); updateEventUI(todayResultDiv, 'Error loading calendar.'); lastUpdatedP.textContent = 'Failed to load calendar data.'; } }
-        function formatDateForLookup(date) { return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`; }
-        function displayToday() { const today = new Date(); const todayStr = formatDateForLookup(today); const event = calendarMap.get(todayStr) || "No School / Weekend"; updateEventUI(todayResultDiv, event); }
-        function setupDatePicker() { datePicker.addEventListener('change', updateLookupResult); }
-        function updateLookupResult() { if (!datePicker.value) { lookupResultDiv.style.display = 'none'; return; } const selectedDate = new Date(`${datePicker.value}T00:00:00`); const selectedDateStr = formatDateForLookup(selectedDate); const event = calendarMap.get(selectedDateStr) || "No School / Weekend"; lookupDateHeader.textContent = selectedDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); updateEventUI(lookupEventDiv, event); lookupResultDiv.style.display = 'flex'; }
+        async function initializeCalendar() {
+            updateEventUI(todayResultDiv, 'Loading...');
+            lastUpdatedP.textContent = 'Fetching latest calendar data...';
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A:E?key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Network response error: ${response.status}`);
+                const data = await response.json();
+                
+                calendarMap.clear();
+                const rows = data.values || [];
+                rows.slice(1).forEach(row => {
+                    if (row[0] && row[4]) calendarMap.set(row[0], row[4]);
+                });
+
+                displayToday();
+                if (datePicker.value) updateLookupResult();
+                lastUpdatedP.textContent = `Calendar data updated at: ${new Date().toLocaleTimeString()}`;
+            } catch (error) {
+                console.error('Error fetching calendar data:', error);
+                updateEventUI(todayResultDiv, 'Error loading calendar.');
+                lastUpdatedP.textContent = 'Failed to load calendar data.';
+            }
+        }
+        function formatDateForLookup(date) {
+            return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+        }
+        function displayToday() {
+            const today = new Date();
+            const todayStr = formatDateForLookup(today);
+            const event = calendarMap.get(todayStr) || "No School / Weekend";
+            updateEventUI(todayResultDiv, event);
+        }
+        function setupDatePicker() {
+            datePicker.addEventListener('change', updateLookupResult);
+        }
+        function updateLookupResult() {
+            if (!datePicker.value) {
+                lookupResultDiv.style.display = 'none';
+                return;
+            }
+            const selectedDate = new Date(`${datePicker.value}T00:00:00`);
+            const selectedDateStr = formatDateForLookup(selectedDate);
+            const event = calendarMap.get(selectedDateStr) || "No School / Weekend";
+            lookupDateHeader.textContent = selectedDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            updateEventUI(lookupEventDiv, event);
+            lookupResultDiv.style.display = 'flex';
+        }
         
-        // The one, correct version of the updateEventUI function
+        // The one, correct version of the updateEventUI function (now only one copy)
         function updateEventUI(element, eventText) {
             element.textContent = eventText;
 
