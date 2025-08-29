@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- 1. UPDATED: Your new head content -->
+    <!-- Your head content, now with the suggested meta tag added -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes"> <!-- Added for best practice -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Day Cycle">
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
@@ -13,7 +14,6 @@
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
-    <!-- End of updated head content -->
 
     <title>School Day Cycle</title>
     
@@ -42,20 +42,20 @@
     <div class="relative bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg text-center w-full max-w-sm">
         
         <div class="flex justify-between items-center absolute top-4 right-4">
-            <button id="search-button" class="rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800 focus:ring-indigo-500 mr-2">
+            <button id="search-button" class="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800 focus:ring-indigo-500 mr-2">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>
             </button>
-            <button id="theme-toggle" class="pr-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800 focus:ring-indigo-500">
+            <button id="theme-toggle" class="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-800 focus:ring-indigo-500">
                 <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                 <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
             </button>
         </div>
 
-        <h1 class="text-3xl font-bold text-indigo-800 dark:text-indigo-400 mt-4 mb-6">School Day Cycle</h1>
+        <h1 class="text-3xl font-bold text-indigo-800 dark:text-indigo-400 my-8">School Day Cycle</h1>
 
         <div class="border-2 border-slate-200 dark:border-slate-700 rounded-lg p-5 mt-5 flex flex-col justify-center items-center min-h-[120px]">
             <h2 class="text-lg text-slate-600 dark:text-slate-400">Today is:</h2>
-            <div class="font-bold my-4" id="today-event">Loading...</div>
+            <div class="font-bold my-6" id="today-event">Loading...</div>
         </div>
         
         <div class="mt-6 text-sm text-slate-400 dark:text-slate-500">
@@ -75,7 +75,7 @@
             </div>
             <div id="lookup-result" class="border-2 border-slate-200 dark:border-slate-700 rounded-lg p-5 mt-4 flex flex-col justify-center items-center min-h-[120px]" style="display: none;">
                 <h2 id="lookup-date-header" class="text-base text-slate-600 dark:text-slate-400 mb-1 font-medium"></h2>
-                <div class="font-bold" id="lookup-event"></div>
+                <div class="font-bold my-12" id="lookup-event"></div>
             </div>
         </div>
     </div>
@@ -92,7 +92,6 @@
         const datePicker = document.getElementById('date-picker');
         const lookupResultDiv = document.getElementById('lookup-result');
         const lookupEventDiv = document.getElementById('lookup-event');
-        // ... and all other selectors ...
         const lookupDateHeader = document.getElementById('lookup-date-header');
         const lastUpdatedP = document.getElementById('last-updated');
         const themeToggleButton = document.getElementById('theme-toggle');
@@ -121,13 +120,11 @@
         function displayToday() { const today = new Date(); const todayStr = formatDateForLookup(today); const event = calendarMap.get(todayStr) || "No School / Weekend"; updateEventUI(todayResultDiv, event); }
         function setupDatePicker() { datePicker.addEventListener('change', updateLookupResult); }
         function updateLookupResult() { if (!datePicker.value) { lookupResultDiv.style.display = 'none'; return; } const selectedDate = new Date(`${datePicker.value}T00:00:00`); const selectedDateStr = formatDateForLookup(selectedDate); const event = calendarMap.get(selectedDateStr) || "No School / Weekend"; lookupDateHeader.textContent = selectedDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); updateEventUI(lookupEventDiv, event); lookupResultDiv.style.display = 'flex'; }
-        function updateEventUI(element, eventText) { element.textContent = eventText; const eventColorClasses = ['text-blue-800', 'dark:text-blue-400', 'text-amber-600', 'dark:text-amber-400', 'text-red-700', 'dark:text-red-500', 'text-slate-500', 'dark:text-slate-400']; element.classList.remove(...eventColorClasses, 'text-2xl'); element.classList.add('text-4xl'); if (eventText.includes('Day')) { element.classList.add('text-blue-800', 'dark:text-blue-400'); } else if (eventText.includes('PA Day')) { element.classList.add('text-amber-600', 'dark:text-amber-400'); } else if (eventText.includes('Holiday')) { element.classList.add('text-red-700', 'dark:text-red-500'); } else { element.classList.add('text-slate-500', 'dark:text-slate-400'); element.classList.replace('text-4xl', 'text-2xl'); } }
-
-        // 2. MODIFIED: The updateEventUI function with the new font size logic
+        
+        // The one, correct version of the updateEventUI function
         function updateEventUI(element, eventText) {
             element.textContent = eventText;
 
-            // Define all possible classes to remove for a clean slate
             const allSizeClasses = ['text-4xl', 'text-7xl'];
             const allColorClasses = [
                 'text-blue-800', 'dark:text-blue-400',
@@ -137,17 +134,12 @@
             ];
             element.classList.remove(...allSizeClasses, ...allColorClasses);
 
-            // Check if it's a "No School" day or a loading/error message
             const isNonEventDay = eventText === "No School / Weekend" || eventText === "Loading..." || eventText.includes("Error");
 
             if (isNonEventDay) {
-                // Apply 4xl font size for non-event days
                 element.classList.add('text-4xl', 'text-slate-500', 'dark:text-slate-400');
             } else {
-                // Apply 7xl font size for all other actual events
                 element.classList.add('text-7xl');
-
-                // Apply the correct color for the specific event type
                 if (eventText.includes('Day')) {
                     element.classList.add('text-blue-800', 'dark:text-blue-400');
                 } else if (eventText.includes('PA Day')) {
@@ -168,19 +160,6 @@
         const ONE_HOUR_IN_MS = 60 * 60 * 1000;
         setInterval(initializeCalendar, ONE_HOUR_IN_MS);
 
-        // --- HELPER FUNCTIONS (for brevity) ---
-        function openModal() { searchModal.classList.remove('opacity-0', 'pointer-events-none'); modalContent.classList.remove('scale-95'); }
-        function closeModal() { searchModal.classList.add('opacity-0', 'pointer-events-none'); modalContent.classList.add('scale-95'); }
-        function initializeModal() { searchButton.addEventListener('click', openModal); closeModalButton.addEventListener('click', closeModal); searchModal.addEventListener('click', (event) => { if (event.target === searchModal) closeModal(); }); window.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !searchModal.classList.contains('pointer-events-none')) closeModal(); }); }
-        function enableDarkMode() { document.documentElement.classList.add('dark'); localStorage.setItem('theme', 'dark'); lightIcon.classList.remove('hidden'); darkIcon.classList.add('hidden'); }
-        function disableDarkMode() { document.documentElement.classList.remove('dark'); localStorage.setItem('theme', 'light'); lightIcon.classList.add('hidden'); darkIcon.classList.remove('hidden'); }
-        function initializeTheme() { const savedTheme = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; if (savedTheme === 'dark' || (!savedTheme && prefersDark)) { enableDarkMode(); } else { disableDarkMode(); } themeToggleButton.addEventListener('click', () => { if (document.documentElement.classList.contains('dark')) { disableDarkMode(); } else { enableDarkMode(); } }); }
-        async function initializeCalendar() { updateEventUI(todayResultDiv, 'Loading...'); lastUpdatedP.textContent = 'Fetching latest calendar data...'; const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}!A:E?key=${API_KEY}`; try { const response = await fetch(url); if (!response.ok) throw new Error(`Network response error: ${response.status}`); const data = await response.json(); calendarMap.clear(); const rows = data.values || []; rows.slice(1).forEach(row => { if (row[0] && row[4]) calendarMap.set(row[0], row[4]); }); displayToday(); if (datePicker.value) updateLookupResult(); lastUpdatedP.textContent = `Calendar data updated at: ${new Date().toLocaleTimeString()}`; } catch (error) { console.error('Error fetching calendar data:', error); updateEventUI(todayResultDiv, 'Error loading calendar.'); lastUpdatedP.textContent = 'Failed to load calendar data.'; } }
-        function formatDateForLookup(date) { return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`; }
-        function displayToday() { const today = new Date(); const todayStr = formatDateForLookup(today); const event = calendarMap.get(todayStr) || "No School / Weekend"; updateEventUI(todayResultDiv, event); }
-        function setupDatePicker() { datePicker.addEventListener('change', updateLookupResult); }
-        function updateLookupResult() { if (!datePicker.value) { lookupResultDiv.style.display = 'none'; return; } const selectedDate = new Date(`${datePicker.value}T00:00:00`); const selectedDateStr = formatDateForLookup(selectedDate); const event = calendarMap.get(selectedDateStr) || "No School / Weekend"; lookupDateHeader.textContent = selectedDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); updateEventUI(lookupEventDiv, event); lookupResultDiv.style.display = 'flex'; }
-        };
     </script>
 </body>
 </html>
